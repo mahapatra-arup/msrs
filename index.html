@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bing Auto Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        #div-settings {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            font-size: 16px;
+            background-color: #f9f9f9;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #span-progress, #span-timer, #span-countdown {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div id="div-settings">
+        <label for="slc-limit">Search Limit:</label>
+        <select id="slc-limit">
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+        </select>
+
+        <label for="slc-interval">Search Interval (ms):</label>
+        <select id="slc-interval">
+            <option value="10000">10 seconds</option>
+            <option value="20000">20 seconds</option>
+            <option value="30000">30 seconds</option>
+        </select>
+
+        <label for="slc-multitab">Open in Multiple Tabs:</label>
+        <select id="slc-multitab">
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+
+        <label for="slc-waitTime">Wait Time Between Cycles (minutes):</label>
+        <select id="slc-waitTime">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="15">15</option>
+            <option value="16">16</option>
+            <option value="17">17</option>
+        </select>
+
+        <button id="btn-start">Start Search</button>
+        <button id="btn-stop" disabled>Stop Search</button>
+    </div>
+
+    <span id="span-progress">Total searches performed: 0</span>
+    <span id="span-countdown">Next search in: 0 seconds</span>
+
+    <script>
+        const BING_AUTOSEARCH = {
+            elements: {
+                button: {
+                    start: document.getElementById("btn-start"),
+                    stop: document.getElementById("btn-stop")
+                },
+                select: {
+                    limit: document.getElementById("slc-limit"),
+                    interval: document.getElementById("slc-interval"),
+                    multitab: document.getElementById("slc-multitab"),
+                    waitTime: document.getElementById("slc-waitTime")
+                },
+                span: {
+                    progress: document.getElementById("span-progress"),
+                    countdown: document.getElementById("span-countdown")
+                }
+            },
+            search: {
+                limitCycle: 4,
+                limit: 20,
+                currentTotalSearches: 0,
+                interval: 10000,
+                multitab: true,
+                intervalId: null,
+                countdownId: null,
+                engine: {
+                    terms: {
+                        lists: [
+                            ["Understanding Market Trends", "Top Investment Strategies for 2024", "Analyzing Stock Performance", "Risk Management in Investing"]
+                        ]
+                    },
+                    form: [
+                        "QBRE", "QBLH", "QBLW", "QBRS"
+                    ],
+                    getRandomForm: function() {
+                        return this.form[Math.floor(Math.random() * this.form.length)];
+                    },
+                    getRandomCVID: function() {
+                        return 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'.replace(/[x]/g, () => {
+                            return (Math.floor(Math.random() * 16)).toString(16).toUpperCase();
+                        });
+                    }
+                },
+                runSearchCycle: function () {
+                    let currentSearchCount = 0;
+
+                    this.performSearch(currentSearchCount);
+                    currentSearchCount++;
+                    this.currentTotalSearches++;
+
+                    BING_AUTOSEARCH.elements.span.progress.innerText = `Total searches performed: ${this.currentTotalSearches}`;
+
+                    this.updateCountdown(this.interval);
+
+                    this.intervalId = setInterval(() => {
+                        if (currentSearchCount >= this.limitCycle || this.currentTotalSearches >= this.limit) {
+                            clearInterval(this.intervalId);
+                            clearInterval(this.countdownId);
+                            if (this.currentTotalSearches < this.limit) {
+                                const waitTimeMinutes = parseInt(BING_AUTOSEARCH.elements.select.waitTime.value, 10);
+                                const waitTimeMs = waitTimeMinutes * 60 * 1000;
+
+                                setTimeout(() => {
+                                    console.log(`Waiting ${waitTimeMinutes} minutes before starting a new search cycle...`);
+                                    this.runSearchCycle();
+                                }, waitTimeMs);
+                            } else {
+                                console.log("Total search limit reached. Stopping the process.");
+                            }
+                        } else {
+                            this.performSearch(currentSearchCount);
+                            currentSearchCount++;
+                            this.currentTotalSearches++;
+
+                            BING_AUTOSEARCH.elements.span.progress.innerText = `Total searches performed: ${this.currentTotalSearches}`;
+                            this.updateCountdown(this.interval);
+                        }
+                    }, this.interval);
+                },
+                performSearch: function (index) {
+                    const searchTerm = this.engine.terms.lists[0][index % this.engine.terms.lists[0].length];
+                    const randomForm = this.engine.getRandomForm();
+                    const randomCVID = this.engine.getRandomCVID();
+                    
+                    const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(searchTerm.toLowerCase())}&qs=n&form=${randomForm}&sp=-1&ghc=1&lq=0&pq=${encodeURIComponent(searchTerm)}&sc=10-4&sk=&cvid=${randomCVID}&ghsh=0&ghacc=0&ghpl=`;
+                    console.log(`Searching for: ${searchTerm} with FORM=${randomForm} and CVID=${randomCVID}`);
+
+                    if (this.multitab) {
+                        window.open(searchUrl, '_blank');
+                    } else {
+                        window.location.href = searchUrl;
+                    }
+                },
+                updateCountdown: function (intervalMs) {
+                    const countdownDisplay = BING_AUTOSEARCH.elements.span.countdown;
+                    let countdownValue = Math.floor(intervalMs / 1000);
+
+                    if (this.countdownId) {
+                        clearInterval(this.countdownId);
+                    }
+
+                    this.countdownId = setInterval(() => {
+                        if (countdownValue <= 0) {
+                            clearInterval(this.countdownId);
+                            countdownDisplay.innerText = "Next search in: 0 seconds";
+                        } else {
+                            countdownDisplay.innerText = `Next search in: ${countdownValue} seconds`;
+                            countdownValue--;
+                        }
+                    }, 1000);
+                },
+                stopSearch: function () {
+                    clearInterval(this.intervalId);
+                    clearInterval(this.countdownId);
+                    console.log("Search process stopped.");
+                }
+            }
+        };
+
+        BING_AUTOSEARCH.elements.button.start.addEventListener("click", function () {
+            BING_AUTOSEARCH.search.limit = parseInt(BING_AUTOSEARCH.elements.select.limit.value, 10);
+            BING_AUTOSEARCH.search.interval = parseInt(BING_AUTOSEARCH.elements.select.interval.value, 10);
+            BING_AUTOSEARCH.search.multitab = BING_AUTOSEARCH.elements.select.multitab.value === "true";
+            BING_AUTOSEARCH.search.runSearchCycle();
+            BING_AUTOSEARCH.elements.button.start.disabled = true;
+            BING_AUTOSEARCH.elements.button.stop.disabled = false;
+        });
+
+        BING_AUTOSEARCH.elements.button.stop.addEventListener("click", function () {
+            BING_AUTOSEARCH.search.stopSearch();
+            BING_AUTOSEARCH.elements.button.start.disabled = false;
+            BING_AUTOSEARCH.elements.button.stop.disabled = true;
+        });
+    </script>
+</body>
+</html>
