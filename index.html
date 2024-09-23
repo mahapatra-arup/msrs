@@ -1,5 +1,6 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -29,7 +30,8 @@
             font-weight: bold;
         }
 
-        select, button {
+        select,
+        button {
             width: 100%;
             padding: 10px;
             margin-top: 5px;
@@ -55,7 +57,9 @@
             cursor: not-allowed;
         }
 
-        #span-progress, #span-timer, #span-countdown {
+        #span-progress,
+        #span-timer,
+        #span-countdown {
             display: block;
             text-align: center;
             margin-top: 20px;
@@ -69,20 +73,22 @@
         }
     </style>
 </head>
+
 <body>
     <div id="div-settings">
         <label for="slc-limit">Search Limit:</label>
         <select id="slc-limit">
             <option value="20">20</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
+            <option value="30">30</option>
+            <option value="35">35</option>
         </select>
 
         <label for="slc-interval">Search Interval (ms):</label>
         <select id="slc-interval">
+            <option value="8000">8 seconds</option>
+            <option value="9000">9 seconds</option>
             <option value="10000">10 seconds</option>
-            <option value="20000">20 seconds</option>
-            <option value="30000">30 seconds</option>
+            <option value="11000">11 seconds</option>
         </select>
 
         <label for="slc-multitab">Open in Multiple Tabs:</label>
@@ -106,6 +112,7 @@
 
     <span id="span-progress">Total searches performed: 0</span>
     <span id="span-countdown">Next search in: 0 seconds</span>
+    <label>Version:2.0</label>
 
     <script>
         const BING_AUTOSEARCH = {
@@ -133,28 +140,43 @@
                 multitab: true,
                 intervalId: null,
                 countdownId: null,
+                previousTab: null, // Track the previous opened tab
                 engine: {
                     terms: {
                         lists: [
-                            ["Understanding Market Trends", "Top Investment Strategies for 2024", "Analyzing Stock Performance", "Risk Management in Investing"]
+                            ["After", "conquering", "Lanka,", "Ramachandra", "returned", "to", "Ayodhya", "with", "Sita.", "So", "far", "his", "kingdom", "has", "been", "managed", "by", "brother", "Bharata,", "with", "his", "shoes", "on", "the", "throne", "in", "his", "name.", "Now", "Ram", "is", "his", "possessor.", "Sita", "has", "already", "proved", "her", "chastity", "by", "fire", "test", "but", "is", "allowed", "to", "enter", "the", "palace", "of", "Ayodhya.", "(Short", "Story)", "Another", "four", "months", "passed.", "Sita", "is", "pregnant.", "As", "soon", "as", "he", "found", "out,", "Rama", "ordered", "to", "leave", "Sita", "in", "the", "deep", "forest", "away", "from", "the", "palace.", "It", "is", "Rama", "who,", "in", "an", "effort", "to", "protect", "the", "dignity", "of", "his", "wife,", "kills", "the", "Lankeshwara", "Ravana", "who", "won", "Tribhuvana", "and", "installs", "Vibhishana", "on", "the", "throne", "of", "Lanka", "in", "order", "to", "establish", "justice.", "Rama", "who", "believes", "in", "the", "name", "of", "truth", "should", "do", "everything", "for", "the", "welfare", "of", "the", "people.", "That", "Rama", "left", "him", "for", "the", "subjects", "on", "the", "charge", "of", "Asati.", "Sita", "is", "alone", "in", "Valmiki's", "ashram.", "ashram", "daughter", "Most", "of", "the", "days,", "he", "sits", "on", "the", "banks", "of", "Tamsa", "river", "and", "watches", "his", "own", "shadow", "in", "the", "water.", "That", "shadow", "is", "sometimes", "broken", "little", "by", "little", "by", "the", "vibration", "of", "the", "waves.", "Sometimes", "still,", "as", "if", "sitting", "on", "water"]
                         ]
                     },
                     form: [
-                        "QBRE", "QBLH", "QBLW", "QBRS"
+                        "QBLH", //Main page textbox suggestion click
+                        "QBRE", //Search page textbox suggestion click
+                        "HDRSC1", //Search tabmenu click 
+                        "LGWQS1", "LGWQS2", "LGWQS3", //Left sidebar suggestion click
+                        "R5FD", "R5FD1", "R5FD2", "R5FD3", "R5FD4", "R5FD5", "R5FD6", "R5FD7", //Right sidebar suggestion click
+                        "QSRE1", "QSRE2", "QSRE3", "QSRE4", "QSRE5", "QSRE6", "QSRE7", "QSRE8", //Footer suggestion click
                     ],
-                    getRandomForm: function() {
+                    getRandomForm: function () {
                         return this.form[Math.floor(Math.random() * this.form.length)];
                     },
-                    getRandomCVID: function() {
+                    getRandomCVID: function () {
                         return 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'.replace(/[x]/g, () => {
                             return (Math.floor(Math.random() * 16)).toString(16).toUpperCase();
                         });
                     }
                 },
+                // Function to generate a random letter search term (e.g., 3-5 letters)
+                generateRandomLetterString: function (length) {
+                    const letters = 'abcdefghijklmnopqrstuvwxyz';
+                    let result = '';
+                    for (let i = 0; i < length; i++) {
+                        result += letters.charAt(Math.floor(Math.random() * letters.length));
+                    }
+                    return result;
+                },
                 runSearchCycle: function () {
                     let currentSearchCount = 0;
 
-                    this.performSearch(currentSearchCount);
+                    this.performSearch();
                     currentSearchCount++;
                     this.currentTotalSearches++;
 
@@ -178,7 +200,7 @@
                                 console.log("Total search limit reached. Stopping the process.");
                             }
                         } else {
-                            this.performSearch(currentSearchCount);
+                            this.performSearch();
                             currentSearchCount++;
                             this.currentTotalSearches++;
 
@@ -187,19 +209,27 @@
                         }
                     }, this.interval);
                 },
-                performSearch: function (index) {
-                    const searchTerm = this.engine.terms.lists[0][index % this.engine.terms.lists[0].length];
+                performSearch: function () {
+                    // Generate a random letter string (3-5 letters long)
+                    const randomSearchTerm = this.generateRandomLetterString(5);
                     const randomForm = this.engine.getRandomForm();
                     const randomCVID = this.engine.getRandomCVID();
-                    
-                    const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(searchTerm.toLowerCase())}&qs=n&form=${randomForm}&sp=-1&ghc=1&lq=0&pq=${encodeURIComponent(searchTerm)}&sc=10-4&sk=&cvid=${randomCVID}&ghsh=0&ghacc=0&ghpl=`;
-                    console.log(`Searching for: ${searchTerm} with FORM=${randomForm} and CVID=${randomCVID}`);
 
-                    if (this.multitab) {
-                        window.open(searchUrl, '_blank');
-                    } else {
-                        window.location.href = searchUrl;
+                    // Format the search URL with the random term and form
+                    const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(randomSearchTerm)}&qs=n&form=${randomForm}`; //&cvid=${randomCVID}
+
+                    console.log(`Searching for: ${randomSearchTerm} with FORM=${randomForm} and CVID=${randomCVID}`);
+
+                    // Close previous tab if it exists
+                    if (this.previousTab) {
+                        this.previousTab.close();
                     }
+
+                    // Open a new tab and keep track of it
+                    this.previousTab = window.open(searchUrl, '_blank');
+
+                    // Keep the main window focused
+                    window.focus();
                 },
                 updateCountdown: function (intervalMs) {
                     const countdownDisplay = BING_AUTOSEARCH.elements.span.countdown;
@@ -242,5 +272,6 @@
             BING_AUTOSEARCH.elements.button.stop.disabled = true;
         });
     </script>
+
 </body>
 </html>
