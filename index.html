@@ -79,7 +79,7 @@
         <label for="slc-limit">Search Limit:</label>
         <select id="slc-limit">
             <option value="20">20</option>
-            <option value="30" selected>30</option>
+            <option value="30">30</option>
             <option value="35">35</option>
         </select>
 
@@ -147,7 +147,7 @@
                 engine: {
                     terms: {
                         lists: [
-                            ["After", "conquering", "Lanka,", "Ramachandra", "returned", "to", "Ayodhya", "with", "Sita.", "So", "far", "his", "kingdom", "has", "been", "managed", "by", "brother", "Bharata,", "with", "his", "shoes", "on", "the", "throne", "in", "his", "name.", "Now", "Ram", "is", "his", "possessor.", "Sita", "has", "already", "proved", "her", "chastity", "by", "fire", "test", "but", "is", "allowed", "to", "enter", "the", "palace", "of", "Ayodhya.", "(Short", "Story)", "Another", "four", "months", "passed.", "Sita", "is", "pregnant.", "As", "soon", "as", "he", "found", "out,", "Rama", "ordered", "to", "leave", "Sita", "in", "the", "deep", "forest", "away", "from", "the", "palace.", "It", "is", "Rama", "who,", "in", "an", "effort", "to", "protect", "the", "dignity", "of", "his", "wife,", "kills", "the", "Lankeshwara", "Ravana", "who", "won", "Tribhuvana", "and", "installs", "Vibhishana", "on", "the", "throne", "of", "Lanka", "in", "order", "to", "establish", "justice.", "Rama", "who", "believes", "in", "the", "name", "of", "truth", "should", "do", "everything", "for", "the", "welfare", "of", "the", "people.", "That", "Rama", "left", "him", "for", "the", "subjects", "on", "the", "charge", "of", "Asati.", "Sita", "is", "alone", "in", "Valmiki's", "ashram.", "ashram", "daughter", "Most", "of", "the", "days,", "he", "sits", "on", "the", "banks", "of", "Tamsa", "river", "and", "watches", "his", "own", "shadow", "in", "the", "water.", "That", "shadow", "is", "sometimes", "broken", "little", "by", "little", "by", "the", "vibration", "of", "the", "waves.", "Sometimes", "still,", "as", "if", "sitting", "on", "water"]
+                            ["text1","text2"]
                         ]
                     },
                     form: [
@@ -169,7 +169,7 @@
                 },
                 // Function to generate a random letter search term (e.g., 3-5 letters)
                 generateRandomLetterString: function (length) {
-                    const letters = 'abcdefghijklmnopqrstuvwxyz';
+                    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123';
                     let result = '';
                     for (let i = 0; i < length; i++) {
                         result += letters.charAt(Math.floor(Math.random() * letters.length));
@@ -214,7 +214,7 @@
                 },
                 performSearch: function () {
                     // Generate a random letter string (3-5 letters long)
-                    const randomSearchTerm = this.generateRandomLetterString(5);
+                    const randomSearchTerm = this.generateRandomLetterString(7);
                     const randomForm = this.engine.getRandomForm();
                     const randomCVID = this.engine.getRandomCVID();
 
