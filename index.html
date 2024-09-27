@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bing  Search</title>
+    <title>Bing Auto Search</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body class="bg-light py-5">
@@ -71,146 +72,73 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 
     <script>
-        const BING_AUTOSEARCH = {
-            elements: {
-                button: {
-                    start: document.getElementById("btn-start"),
-                    stop: document.getElementById("btn-stop")
-                },
-                select: {
-                    limit: document.getElementById("slc-limit"),
-                    interval: document.getElementById("slc-interval"),
-                    multitab: document.getElementById("slc-multitab"),
-                    waitTime: document.getElementById("slc-waitTime")
-                },
-                span: {
-                    progress: document.getElementById("span-progress"),
-                    countdown: document.getElementById("span-countdown")
+        $(document).ready(function () {
+            let currentTotalSearches = 0;
+            let intervalId = null;
+            let countdownId = null;
+
+            function generateRandomString(length) {
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123';
+                let result = '';
+                for (let i = 0; i < length; i++) {
+                    result += characters.charAt(Math.floor(Math.random() * characters.length));
                 }
-            },
-            search: {
-                limitCycle: 4,
-                limit: 20,
-                currentTotalSearches: 0,
-                interval: 10000,
-                multitab: true,
-                intervalId: null,
-                countdownId: null,
-                previousTab: null,
-                engine: {
-                    terms: {
-                        lists: [
-                            ["text1", "text2"]
-                        ]
-                    },
-                    form: [
-                        "QBLH", "QBRE", "HDRSC1", "LGWQS1", "LGWQS2", "LGWQS3",
-                        "R5FD", "QSRE1", "QSRE2", "QSRE3", "QSRE4", "QSRE5"
-                    ],
-                    getRandomForm: function () {
-                        return this.form[Math.floor(Math.random() * this.form.length)];
-                    }
-                },
-                generateRandomLetterString: function (length) {
-                    const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123';
-                    return Array.from({ length }, () => letters.charAt(Math.floor(Math.random() * letters.length))).join('');
-                },
-                runSearchCycle: function () {
-                    let currentSearchCount = 0;
+                return result;
+            }
 
-                    this.performSearch();
-                    currentSearchCount++;
-                    this.currentTotalSearches++;
+            function performSearch() {
+                const randomSearchTerm = generateRandomString(7);
+                const randomForm = Math.random().toString(36).substring(2, 7).toUpperCase(); // Simplified random form generation
+                const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(randomSearchTerm)}&qs=n&form=${randomForm}`;
 
-                    BING_AUTOSEARCH.elements.span.progress.innerText = `Total searches performed: ${this.currentTotalSearches}`;
+                console.log(`Searching for: ${randomSearchTerm} with FORM=${randomForm}`);
+                window.open(searchUrl, '_blank');
+                currentTotalSearches++;
+                $('#span-progress').text(`Total searches performed: ${currentTotalSearches}`);
+            }
 
-                    this.updateCountdown(this.interval);
+            function startSearchCycle() {
+                const limit = parseInt($('#slc-limit').val(), 10);
+                const interval = parseInt($('#slc-interval').val(), 10);
+                const waitTime = parseInt($('#slc-waitTime').val(), 10) * 60 * 1000; // Convert to milliseconds
 
-                    this.intervalId = setInterval(() => {
-                        if (currentSearchCount >= this.limitCycle || this.currentTotalSearches >= this.limit) {
-                            clearInterval(this.intervalId);
-                            clearInterval(this.countdownId);
-                            if (this.currentTotalSearches < this.limit) {
-                                const waitTimeMinutes = parseInt(BING_AUTOSEARCH.elements.select.waitTime.value, 10);
-                                const waitTimeMs = waitTimeMinutes * 60 * 1000;
+                if (currentTotalSearches < limit) {
+                    performSearch();
+                    $('#span-countdown').text(`Next search in: ${interval / 1000} seconds`);
 
-                                setTimeout(() => {
-                                    this.runSearchCycle();
-                                }, waitTimeMs);
-                            } else {
-                                console.log("Total search limit reached. Stopping the process.");
-                            }
-                        } else {
-                            this.performSearch();
-                            currentSearchCount++;
-                            this.currentTotalSearches++;
+                    clearInterval(countdownId);
+                    let countdown = interval / 1000;
 
-                            BING_AUTOSEARCH.elements.span.progress.innerText = `Total searches performed: ${this.currentTotalSearches}`;
-                            this.updateCountdown(this.interval);
+                    countdownId = setInterval(() => {
+                        countdown--;
+                        $('#span-countdown').text(`Next search in: ${countdown} seconds`);
+                        if (countdown <= 0) {
+                            clearInterval(countdownId);
                         }
-                    }, this.interval);
-                },
-                performSearch: function () {
-                    if (!navigator.onLine) {
-                        console.log("No internet connection. Pausing search...");
-                        return;
-                    }
-
-                    const randomSearchTerm = this.generateRandomLetterString(7);
-                    const randomForm = this.engine.getRandomForm();
-                    const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(randomSearchTerm)}&qs=n&form=${randomForm}`;
-
-                    try {
-                        console.log(`Searching for: ${randomSearchTerm} with FORM=${randomForm}`);
-                        if (this.previousTab) {
-                            this.previousTab.close();
-                        }
-
-                        this.previousTab = window.open(searchUrl, '_blank');
-                        if (!this.previousTab) {
-                            throw new Error("Pop-up blocked. Please allow pop-ups.");
-                        }
-
-                        window.focus();
-                    } catch (error) {
-                        console.error("Error opening tab: ", error);
-                    }
-                },
-                updateCountdown: function (intervalMs) {
-                    let countdownValue = Math.floor(intervalMs / 1000);
-                    const countdownDisplay = BING_AUTOSEARCH.elements.span.countdown;
-
-                    if (this.countdownId) {
-                        clearInterval(this.countdownId);
-                    }
-
-                    this.countdownId = setInterval(() => {
-                        countdownDisplay.innerText = `Next search in: ${countdownValue} seconds`;
-                        if (countdownValue <= 0) {
-                            clearInterval(this.countdownId);
-                        }
-                        countdownValue--;
                     }, 1000);
-                },
-                stopSearch: function () {
-                    clearInterval(this.intervalId);
-                    clearInterval(this.countdownId);
-                    console.log("Search process stopped.");
+
+                    intervalId = setTimeout(startSearchCycle, interval);
+                } else {
+                    alert("Total search limit reached. Stopping the process.");
+                    stopSearch();
                 }
             }
-        };
 
-        BING_AUTOSEARCH.elements.button.start.addEventListener("click", function () {
-            BING_AUTOSEARCH.search.limit = parseInt(BING_AUTOSEARCH.elements.select.limit.value, 10);
-            BING_AUTOSEARCH.search.interval = parseInt(BING_AUTOSEARCH.elements.select.interval.value, 10);
-            BING_AUTOSEARCH.search.multitab = BING_AUTOSEARCH.elements.select.multitab.value === "true";
-            BING_AUTOSEARCH.search.runSearchCycle();
-            BING_AUTOSEARCH.elements.button.start.disabled = true;
-        });
+            function stopSearch() {
+                clearTimeout(intervalId);
+                clearInterval(countdownId);
+                $('#btn-start').prop('disabled', false);
+                $('#btn-stop').prop('disabled', true);
+            }
 
-        BING_AUTOSEARCH.elements.button.stop.addEventListener("click", function () {
-            BING_AUTOSEARCH.search.stopSearch();
-            BING_AUTOSEARCH.elements.button.start.disabled = false;
+            $('#btn-start').click(function () {
+                currentTotalSearches = 0;
+                $('#btn-start').prop('disabled', true);
+                $('#btn-stop').prop('disabled', false);
+                startSearchCycle();
+            });
+
+            $('#btn-stop').click(stopSearch);
         });
     </script>
 </body>
