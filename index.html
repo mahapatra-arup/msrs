@@ -99,7 +99,7 @@
                     previousTab.close();
                 }
 
-                previousTab = window.open(searchUrl, '_blank');
+                previousTab = window.open(searchUrl, '_blank'); // Open the new search tab
                 currentTotalSearches++;
                 $('#span-progress').text(`Total searches performed: ${currentTotalSearches}`);
             }
@@ -143,7 +143,7 @@
             }
 
             $('#btn-start').click(function () {
-                currentTotalSearches = 0;
+                currentTotalSearches = 0; // Reset search count
                 $('#btn-start').prop('disabled', true);
                 $('#btn-stop').prop('disabled', false);
                 startSearchCycle();
