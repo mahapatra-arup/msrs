@@ -7,14 +7,6 @@
     <title>Bing Auto Search</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    
-    <!-- jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/0AKtxdyz5W6WLO6t6tqRzXlT89N79tOG6Lk5+f" crossorigin="anonymous"></script>
-
-    <!-- jQuery Mobile CSS -->
-    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
-    <!-- jQuery Mobile JS -->
-    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
 </head>
 
 <body class="bg-light py-5">
@@ -25,16 +17,16 @@
 
             <div class="mb-3">
                 <label for="slc-limit" class="form-label">Search Limit:</label>
-                <select id="slc-limit" class="form-select" data-role="slider">
+                <select id="slc-limit" class="form-select">
                     <option value="20">20</option>
-                    <option value="30" selected>30</option>
+                    <option value="30">30</option>
                     <option value="35">35</option>
                 </select>
             </div>
 
             <div class="mb-3">
                 <label for="slc-interval" class="form-label">Search Interval (ms):</label>
-                <select id="slc-interval" class="form-select" data-role="slider">
+                <select id="slc-interval" class="form-select">
                     <option value="5000">5 seconds</option>
                     <option value="6000">6 seconds</option>
                     <option value="7000" selected>7 seconds</option>
@@ -47,7 +39,7 @@
 
             <div class="mb-3">
                 <label for="slc-multitab" class="form-label">Open in Multiple Tabs:</label>
-                <select id="slc-multitab" class="form-select" data-role="slider">
+                <select id="slc-multitab" class="form-select">
                     <option value="true">Yes</option>
                     <option value="false">No</option>
                 </select>
@@ -55,7 +47,7 @@
 
             <div class="mb-4">
                 <label for="slc-waitTime" class="form-label">Wait Time Between Cycles (minutes):</label>
-                <select id="slc-waitTime" class="form-select" data-role="slider">
+                <select id="slc-waitTime" class="form-select">
                     <option value="0">0</option>
                     <option value="1">1</option>
                     <option value="15">15</option>
@@ -65,8 +57,8 @@
             </div>
 
             <div class="d-grid gap-2">
-                <a href="#" id="btn-start" class="ui-btn ui-btn-b ui-corner-all">Start Search</a>
-                <a href="#" id="btn-stop" class="ui-btn ui-btn-c ui-corner-all" disabled>Stop Search</a>
+                <button id="btn-start" class="btn btn-primary">Start Search</button>
+                <button id="btn-stop" class="btn btn-secondary" disabled>Stop Search</button>
             </div>
 
             <span id="span-progress" class="d-block mt-4 text-center">Total searches performed: 0</span>
@@ -75,22 +67,25 @@
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
     <script>
         const BING_AUTOSEARCH = {
             elements: {
                 button: {
-                    start: $("#btn-start"),
-                    stop: $("#btn-stop")
+                    start: document.getElementById("btn-start"),
+                    stop: document.getElementById("btn-stop")
                 },
                 select: {
-                    limit: $("#slc-limit"),
-                    interval: $("#slc-interval"),
-                    multitab: $("#slc-multitab"),
-                    waitTime: $("#slc-waitTime")
+                    limit: document.getElementById("slc-limit"),
+                    interval: document.getElementById("slc-interval"),
+                    multitab: document.getElementById("slc-multitab"),
+                    waitTime: document.getElementById("slc-waitTime")
                 },
                 span: {
-                    progress: $("#span-progress"),
-                    countdown: $("#span-countdown")
+                    progress: document.getElementById("span-progress"),
+                    countdown: document.getElementById("span-countdown")
                 }
             },
             search: {
@@ -127,7 +122,7 @@
                     currentSearchCount++;
                     this.currentTotalSearches++;
 
-                    BING_AUTOSEARCH.elements.span.progress.text(`Total searches performed: ${this.currentTotalSearches}`);
+                    BING_AUTOSEARCH.elements.span.progress.innerText = `Total searches performed: ${this.currentTotalSearches}`;
 
                     this.updateCountdown(this.interval);
 
@@ -136,7 +131,7 @@
                             clearInterval(this.intervalId);
                             clearInterval(this.countdownId);
                             if (this.currentTotalSearches < this.limit) {
-                                const waitTimeMinutes = parseInt(BING_AUTOSEARCH.elements.select.waitTime.val(), 10);
+                                const waitTimeMinutes = parseInt(BING_AUTOSEARCH.elements.select.waitTime.value, 10);
                                 const waitTimeMs = waitTimeMinutes * 60 * 1000;
 
                                 setTimeout(() => {
@@ -150,7 +145,7 @@
                             currentSearchCount++;
                             this.currentTotalSearches++;
 
-                            BING_AUTOSEARCH.elements.span.progress.text(`Total searches performed: ${this.currentTotalSearches}`);
+                            BING_AUTOSEARCH.elements.span.progress.innerText = `Total searches performed: ${this.currentTotalSearches}`;
                             this.updateCountdown(this.interval);
                         }
                     }, this.interval);
@@ -190,7 +185,7 @@
                     }
 
                     this.countdownId = setInterval(() => {
-                        countdownDisplay.text(`Next search in: ${countdownValue} seconds`);
+                        countdownDisplay.innerText = `Next search in: ${countdownValue} seconds`;
                         if (countdownValue <= 0) {
                             clearInterval(this.countdownId);
                         }
@@ -205,20 +200,17 @@
             }
         };
 
-        BING_AUTOSEARCH.elements.button.start.on("click", function () {
-            BING_AUTOSEARCH.elements.button.start.attr("disabled", true);
-            BING_AUTOSEARCH.elements.button.stop.attr("disabled", false);
-            BING_AUTOSEARCH.search.limit = parseInt(BING_AUTOSEARCH.elements.select.limit.val(), 10);
-            BING_AUTOSEARCH.search.interval = parseInt(BING_AUTOSEARCH.elements.select.interval.val(), 10);
-            BING_AUTOSEARCH.search.multitab = BING_AUTOSEARCH.elements.select.multitab.val() === "true";
-
+        BING_AUTOSEARCH.elements.button.start.addEventListener("click", function () {
+            BING_AUTOSEARCH.search.limit = parseInt(BING_AUTOSEARCH.elements.select.limit.value, 10);
+            BING_AUTOSEARCH.search.interval = parseInt(BING_AUTOSEARCH.elements.select.interval.value, 10);
+            BING_AUTOSEARCH.search.multitab = BING_AUTOSEARCH.elements.select.multitab.value === "true";
             BING_AUTOSEARCH.search.runSearchCycle();
+            BING_AUTOSEARCH.elements.button.start.disabled = true;
         });
 
-        BING_AUTOSEARCH.elements.button.stop.on("click", function () {
+        BING_AUTOSEARCH.elements.button.stop.addEventListener("click", function () {
             BING_AUTOSEARCH.search.stopSearch();
-            BING_AUTOSEARCH.elements.button.start.attr("disabled", false);
-            BING_AUTOSEARCH.elements.button.stop.attr("disabled", true);
+            BING_AUTOSEARCH.elements.button.start.disabled = false;
         });
     </script>
 </body>
