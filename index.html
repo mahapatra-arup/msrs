@@ -77,6 +77,7 @@
             let intervalId = null;
             let countdownId = null;
             let previousTab = null; // Store the reference to the last opened tab
+            const searchLimitPerCycle = 4; // Set the limit of searches per cycle
 
             function generateRandomString(length) {
                 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123';
@@ -110,30 +111,42 @@
                 const waitTimeMinutes = parseInt($('#slc-waitTime').val(), 10);
                 const waitTimeMs = waitTimeMinutes * 60 * 1000; // Convert to milliseconds
 
-                if (currentTotalSearches < limit) {
-                    performSearch();
-                    $('#span-countdown').text(`Next search in: ${interval / 1000} seconds`);
+                let searchCount = 0;
 
-                    clearInterval(countdownId);
-                    let countdown = interval / 1000;
+                // Function to handle the search operations
+                const searchHandler = () => {
+                    if (currentTotalSearches < limit && searchCount < searchLimitPerCycle) {
+                        performSearch();
+                        searchCount++;
+                        $('#span-countdown').text(`Next search in: ${interval / 1000} seconds`);
 
-                    countdownId = setInterval(() => {
-                        countdown--;
-                        $('#span-countdown').text(`Next search in: ${countdown} seconds`);
-                        if (countdown <= 0) {
-                            clearInterval(countdownId);
+                        clearInterval(countdownId);
+                        let countdown = interval / 1000;
+
+                        countdownId = setInterval(() => {
+                            countdown--;
+                            $('#span-countdown').text(`Next search in: ${countdown} seconds`);
+                            if (countdown <= 0) {
+                                clearInterval(countdownId);
+                            }
+                        }, 1000);
+
+                        // After the interval, call searchHandler again
+                        intervalId = setTimeout(searchHandler, interval);
+                    } else {
+                        // After every 4 searches, wait for the specified wait time
+                        if (searchCount >= searchLimitPerCycle) {
+                            searchCount = 0; // Reset search count for the next cycle
+                            alert(`Waiting for ${waitTimeMinutes} minute(s) before the next set of searches.`);
+                            setTimeout(startSearchCycle, waitTimeMs); // Wait before next cycle
+                        } else {
+                            alert("Total search limit reached. Stopping the process.");
+                            stopSearch();
                         }
-                    }, 1000);
+                    }
+                };
 
-                    // After the interval, wait for the specified wait time before the next cycle
-                    intervalId = setTimeout(() => {
-                        clearInterval(intervalId);
-                        startSearchCycle(); // Start the next search cycle
-                    }, interval);
-                } else {
-                    alert("Total search limit reached. Stopping the process.");
-                    stopSearch();
-                }
+                searchHandler(); // Start the first search
             }
 
             function stopSearch() {
