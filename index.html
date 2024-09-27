@@ -76,6 +76,7 @@
             let currentTotalSearches = 0;
             let intervalId = null;
             let countdownId = null;
+            let previousTab = null; // Store the reference to the last opened tab
 
             function generateRandomString(length) {
                 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123';
@@ -92,7 +93,13 @@
                 const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(randomSearchTerm)}&qs=n&form=${randomForm}`;
 
                 console.log(`Searching for: ${randomSearchTerm} with FORM=${randomForm}`);
-                window.open(searchUrl, '_blank');
+
+                // Close the previous tab if it exists
+                if (previousTab) {
+                    previousTab.close();
+                }
+
+                previousTab = window.open(searchUrl, '_blank');
                 currentTotalSearches++;
                 $('#span-progress').text(`Total searches performed: ${currentTotalSearches}`);
             }
@@ -129,6 +136,10 @@
                 clearInterval(countdownId);
                 $('#btn-start').prop('disabled', false);
                 $('#btn-stop').prop('disabled', true);
+                // Close the last opened tab if it's still open
+                if (previousTab) {
+                    previousTab.close();
+                }
             }
 
             $('#btn-start').click(function () {
