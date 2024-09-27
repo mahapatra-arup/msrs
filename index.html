@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -107,7 +107,8 @@
             function startSearchCycle() {
                 const limit = parseInt($('#slc-limit').val(), 10);
                 const interval = parseInt($('#slc-interval').val(), 10);
-                const waitTime = parseInt($('#slc-waitTime').val(), 10) * 60 * 1000; // Convert to milliseconds
+                const waitTimeMinutes = parseInt($('#slc-waitTime').val(), 10);
+                const waitTimeMs = waitTimeMinutes * 60 * 1000; // Convert to milliseconds
 
                 if (currentTotalSearches < limit) {
                     performSearch();
@@ -124,7 +125,11 @@
                         }
                     }, 1000);
 
-                    intervalId = setTimeout(startSearchCycle, interval);
+                    // After the interval, wait for the specified wait time before the next cycle
+                    intervalId = setTimeout(() => {
+                        clearInterval(intervalId);
+                        startSearchCycle(); // Start the next search cycle
+                    }, interval);
                 } else {
                     alert("Total search limit reached. Stopping the process.");
                     stopSearch();
