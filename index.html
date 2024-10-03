@@ -116,7 +116,7 @@
             function performSearch() {
                 const randomSearchTerm = generateRandomString(7);
                 const randomForm = Math.random().toString(36).substring(2, 7).toUpperCase(); // Simplified random form generation
-                const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(randomSearchTerm)}&qs=n&form=${randomForm}`;
+                const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(randomSearchTerm)}&form=${randomForm}`;
 
                 console.log(`Searching for: ${randomSearchTerm} with FORM=${randomForm}`);
 
