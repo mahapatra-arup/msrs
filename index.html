@@ -43,16 +43,8 @@
             </div>
 
             <div class="mb-3">
-                <label for="slc-interval" class="form-label">Search Interval (ms):</label>
-                <select id="slc-interval" class="form-select">
-                    <option value="5000">5 seconds</option>
-                    <option value="6000">6 seconds</option>
-                    <option value="7000" selected>7 seconds</option>
-                    <option value="8000">8 seconds</option>
-                    <option value="9000">9 seconds</option>
-                    <option value="10000">10 seconds</option>
-                    <option value="11000">11 seconds</option>
-                </select>
+                <label for="input-interval" class="form-label">Search Interval (ms):</label>
+                <input id="input-interval" type="number" class="form-control" placeholder="Enter interval in milliseconds" value="7000">
             </div>
 
             <div class="mb-3">
@@ -98,7 +90,6 @@
             let intervalId = null;
             let countdownId = null;
             let previousTab = null; // Store the reference to the last opened tab
-            const searchLimitPerCycle = 4; // Set the limit of searches per cycle
 
             function generateRandomString(length) {
                 const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123';
@@ -128,13 +119,11 @@
 
             function startSearchCycle() {
                 const limit = parseInt($('#slc-limit').val(), 10);
-                const interval = parseInt($('#slc-interval').val(), 10);
-                let searchCount = 0;
+                const interval = parseInt($('#input-interval').val(), 10); // Get interval from the input field
 
                 const searchHandler = () => {
-                    if (currentTotalSearches < limit && searchCount < searchLimitPerCycle) {
+                    if (currentTotalSearches < limit) {
                         performSearch();
-                        searchCount++;
                         $('#span-countdown').text(`Next search in: ${interval / 1000} seconds`);
 
                         clearInterval(countdownId);
@@ -150,7 +139,6 @@
 
                         intervalId = setTimeout(searchHandler, interval);
                     } else {
-                        searchCount = 0; // Reset for the next cycle
                         $('#toast-message .toast-body').text("Total search limit reached. Stopping the process.");
                         const toastEl = $('#toast-message');
                         const toast = new bootstrap.Toast(toastEl);
