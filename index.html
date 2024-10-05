@@ -6,18 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bing Auto Search</title>
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         /* Custom styles for the toast */
         .toast-header {
-            background-color: #007bff; /* Change header color */
-            color: white; /* Change header text color */
+            background-color: #007bff;
+            /* Change header color */
+            color: white;
+            /* Change header text color */
         }
 
         .toast-body {
-            background-color: #f8f9fa; /* Change body background color */
-            color: #343a40; /* Change body text color */
+            background-color: #f8f9fa;
+            /* Change body background color */
+            color: #343a40;
+            /* Change body text color */
         }
     </style>
 </head>
@@ -58,17 +63,6 @@
                 </select>
             </div>
 
-            <div class="mb-4">
-                <label for="slc-waitTime" class="form-label">Wait Time Between Cycles (minutes):</label>
-                <select id="slc-waitTime" class="form-select">
-                    <option value="0">0</option>
-                    <option value="1">1</option>
-                    <option value="15">15</option>
-                    <option value="16">16</option>
-                    <option value="17">17</option>
-                </select>
-            </div>
-
             <div class="d-grid gap-2">
                 <button id="btn-start" class="btn btn-primary">Start Search</button>
                 <button id="btn-stop" class="btn btn-secondary" disabled>Stop Search</button>
@@ -88,13 +82,15 @@
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
             <div class="toast-body">
-                Waiting for 0 minute(s) before the next set of searches.
+                Total search limit reached. Stopping the process.
             </div>
         </div>
     </div>
 
     <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 
     <script>
         $(document).ready(function () {
@@ -133,12 +129,8 @@
             function startSearchCycle() {
                 const limit = parseInt($('#slc-limit').val(), 10);
                 const interval = parseInt($('#slc-interval').val(), 10);
-                const waitTimeMinutes = parseInt($('#slc-waitTime').val(), 10);
-                const waitTimeMs = waitTimeMinutes * 60 * 1000; // Convert to milliseconds
-
                 let searchCount = 0;
 
-                // Function to handle the search operations
                 const searchHandler = () => {
                     if (currentTotalSearches < limit && searchCount < searchLimitPerCycle) {
                         performSearch();
@@ -156,29 +148,18 @@
                             }
                         }, 1000);
 
-                        // After the interval, call searchHandler again
                         intervalId = setTimeout(searchHandler, interval);
                     } else {
-                        // After every 4 searches, wait for the specified wait time
-                        if (searchCount >= searchLimitPerCycle) {
-                            searchCount = 0; // Reset search count for the next cycle
-                            $('#toast-message .toast-body').text(`Waiting for ${waitTimeMinutes} minute(s) before the next set of searches.`);
-                            const toastEl = $('#toast-message');
-                            const toast = new bootstrap.Toast(toastEl);
-                            toast.show(); // Show the toast notification
-
-                            setTimeout(startSearchCycle, waitTimeMs); // Wait before next cycle
-                        } else {
-                            $('#toast-message .toast-body').text("Total search limit reached. Stopping the process.");
-                            const toastEl = $('#toast-message');
-                            const toast = new bootstrap.Toast(toastEl);
-                            toast.show(); // Show the toast notification
-                            stopSearch();
-                        }
+                        searchCount = 0; // Reset for the next cycle
+                        $('#toast-message .toast-body').text("Total search limit reached. Stopping the process.");
+                        const toastEl = $('#toast-message');
+                        const toast = new bootstrap.Toast(toastEl);
+                        toast.show();
+                        stopSearch();
                     }
                 };
 
-                searchHandler(); // Start the first search
+                searchHandler();
             }
 
             function stopSearch() {
@@ -202,4 +183,7 @@
             $('#btn-stop').click(stopSearch);
         });
     </script>
-</
+
+</body>
+
+</html>
