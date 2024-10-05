@@ -37,14 +37,22 @@
                 <label for="slc-limit" class="form-label">Search Limit:</label>
                 <select id="slc-limit" class="form-select">
                     <option value="20">20</option>
-                    <option value="30">30</option>
+                    <option value="30" selected>30</option>
                     <option value="35">35</option>
                 </select>
             </div>
 
             <div class="mb-3">
-                <label for="input-interval" class="form-label">Search Interval (ms):</label>
-                <input id="input-interval" type="number" class="form-control" placeholder="Enter interval in milliseconds" value="7000">
+                <label for="slc-interval" class="form-label">Search Interval (ms):</label>
+                <select id="slc-interval" class="form-select">
+                    <option value="5000">5 seconds</option>
+                    <option value="6000">6 seconds</option>
+                    <option value="7000">7 seconds</option>
+                    <option value="8000" selected>8 seconds</option>
+                    <option value="9000">9 seconds</option>
+                    <option value="10000">10 seconds</option>
+                    <option value="11000">11 seconds</option>
+                </select>
             </div>
 
             <div class="mb-3">
@@ -62,7 +70,7 @@
 
             <span id="span-progress" class="d-block mt-4 text-center">Total searches performed: 0</span>
             <span id="span-countdown" class="d-block mt-2 text-center">Next search in: 0 seconds</span>
-            <label class="d-block text-muted text-center mt-3">Version: 2.0</label>
+            <label class="d-block text-muted text-center mt-3">Version: 2.1</label>
         </div>
     </div>
 
@@ -119,7 +127,7 @@
 
             function startSearchCycle() {
                 const limit = parseInt($('#slc-limit').val(), 10);
-                const interval = parseInt($('#input-interval').val(), 10); // Get interval from the input field
+                const interval = parseInt($('#slc-interval').val(), 10); // Get interval from the dropdown
 
                 const searchHandler = () => {
                     if (currentTotalSearches < limit) {
