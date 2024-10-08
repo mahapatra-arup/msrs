@@ -36,9 +36,11 @@
             <div class="mb-3">
                 <label for="slc-limit" class="form-label">Search Limit:</label>
                 <select id="slc-limit" class="form-select">
+                    <option value="10">10</option>
                     <option value="20">20</option>
                     <option value="30" selected>30</option>
                     <option value="35">35</option>
+                    <option value="45">45</option>
                 </select>
             </div>
 
@@ -70,7 +72,7 @@
 
             <span id="span-progress" class="d-block mt-4 text-center">Total searches performed: 0</span>
             <span id="span-countdown" class="d-block mt-2 text-center">Next search in: 0 seconds</span>
-            <label class="d-block text-muted text-center mt-3">Version: 2.0</label>
+            <label class="d-block text-muted text-center mt-3">Version: 2.02</label>
         </div>
     </div>
 
@@ -117,7 +119,7 @@
                 let randomNum = Math.floor((Math.random() * 10000) + 1);
             
                 // Generate a random string of 6 characters
-                let randomStr = generateRandomString(6);
+                let randomStr = generateRandomString(7);
             
                 // Combine timestamp, random number, and random string for uniqueness
                 let uniqueCode = timestamp.toString(36) + randomNum.toString(36) + randomStr;
