@@ -100,7 +100,7 @@
             let previousTab = null; // Store the reference to the last opened tab
 
             function generateRandomString(length) {
-                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123';
+                const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
                 let result = '';
                 for (let i = 0; i < length; i++) {
                     result += characters.charAt(Math.floor(Math.random() * characters.length));
@@ -108,8 +108,25 @@
                 return result;
             }
 
+
+            function generateUniqueCode() {
+                // Get the current timestamp
+                let timestamp = new Date().getTime();
+            
+                // Generate a random number
+                let randomNum = Math.floor((Math.random() * 10000) + 1);
+            
+                // Generate a random string of 6 characters
+                let randomStr = generateRandomString(6);
+            
+                // Combine timestamp, random number, and random string for uniqueness
+                let uniqueCode = timestamp.toString(36) + randomNum.toString(36) + randomStr;
+            
+                return uniqueCode;
+            }
+
             function performSearch() {
-                const randomSearchTerm = generateRandomString(7);
+                const randomSearchTerm = generateUniqueCode();
                 const randomForm = Math.random().toString(36).substring(2, 7).toUpperCase(); // Simplified random form generation
                 const searchUrl = `https://www.bing.com/search?q=${encodeURIComponent(randomSearchTerm)}&form=${randomForm}`;
 
