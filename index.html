@@ -112,21 +112,18 @@
 
 
             function generateUniqueCode() {
-                // Get the current timestamp
-                let timestamp = new Date().getTime();
-            
                 // Generate a random number
                 let randomNum = Math.floor((Math.random() * 10000) + 1);
             
-                // Generate a random string of 6 characters
-                let randomStr = generateRandomString(5);
+                // Generate a random string of 5 characters
+                let randomStr = generateRandomString(4);
             
-                // Combine timestamp, random number, and random string for uniqueness
-                let uniqueCode = timestamp.toString(36) + randomNum.toString(36) + randomStr;
+                // Combine random number and random string for uniqueness
+                let uniqueCode =  randomStr + randomNum.toString(36);
             
                 return uniqueCode;
             }
-
+            
             function performSearch() {
                 const randomSearchTerm = generateUniqueCode();
                 const randomForm = Math.random().toString(36).substring(2, 7).toUpperCase(); // Simplified random form generation
