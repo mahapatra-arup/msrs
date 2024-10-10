@@ -112,17 +112,13 @@
 
 
             function generateUniqueCode() {
-                // Generate a random number
-                // let randomNum = Math.floor((Math.random() * 10000) + 1);
+                
                 // Get the current second
                 let currentSecond = new Date().getSeconds();
             
                 // Generate a random string of 5 characters
                 let randomStr = generateRandomString(6);
             
-                // Combine random number and random string for uniqueness
-                // let uniqueCode = randomNum.toString(36) + randomStr ;
-
                 // Combine current second, random number, and random string for uniqueness
                 let uniqueCode = currentSecond.toString(36) + randomStr;
             
@@ -151,7 +147,7 @@
                     if (previousTab) {
                         previousTab.close();
                     }
-                }, 5000); // Wait 5 seconds before closing the tab
+                }, 6000); // Wait 5 seconds before closing the tab
 
                 currentTotalSearches++;
                 $('#span-progress').text(`Total searches performed: ${currentTotalSearches}`);
