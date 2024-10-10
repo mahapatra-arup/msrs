@@ -117,10 +117,10 @@
                 let currentSecond = new Date().getSeconds();
             
                 // Generate a random string of 5 characters
-                let randomStr = generateRandomString(6);
+                let randomStr = generateRandomString(5);
             
                 // Combine current second, random number, and random string for uniqueness
-                let uniqueCode = currentSecond.toString(36) + randomStr;
+                let uniqueCode =  randomStr + currentSecond.toString(36);
             
                 return uniqueCode;
             }
