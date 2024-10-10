@@ -116,10 +116,10 @@
                 let randomNum = Math.floor((Math.random() * 10000) + 1);
             
                 // Generate a random string of 5 characters
-                let randomStr = generateRandomString(4);
+                let randomStr = generateRandomString(6);
             
                 // Combine random number and random string for uniqueness
-                let uniqueCode =  randomStr + randomNum.toString(36);
+                let uniqueCode = randomNum.toString(36) + randomStr ;
             
                 return uniqueCode;
             }
