@@ -1,1 +1,1 @@
-# mssearchweb.github.io
+# Automatic microsoft rewards serach
