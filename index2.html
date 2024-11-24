@@ -36,11 +36,11 @@
             <div class="mb-3">
                 <label for="slc-limit" class="form-label">Search Limit:</label>
                 <select id="slc-limit" class="form-select">
-                    <option value="10">12</option>
-                    <option value="20">22</option>
-                    <option value="30" selected>32</option>
-                    <option value="35">37</option>
-                    <option value="45">40</option>
+                    <option value="12">12</option>
+                    <option value="22">22</option>
+                    <option value="33" selected>33</option>
+                    <option value="37">37</option>
+                    <option value="43">43</option>
                 </select>
             </div>
 
@@ -50,9 +50,9 @@
                     <option value="5000">5 seconds</option>
                     <option value="6000">6 seconds</option>
                     <option value="7000">7 seconds</option>
-                    <option value="8000" selected>8 seconds</option>
+                    <option value="8000">8 seconds</option>
                     <option value="9000">9 seconds</option>
-                    <option value="10000">10 seconds</option>
+                    <option value="10000" selected>10 seconds</option>
                     <option value="11000">11 seconds</option>
                 </select>
             </div>
@@ -140,7 +140,7 @@
                     if (previousTab) {
                         previousTab.close();
                     }
-                }, 5000); // Wait 5 seconds before closing the tab
+                }, 7000); // Wait 5 seconds before closing the tab
 
                 currentTotalSearches++;
                 $('#span-progress').text(`Total searches performed: ${currentTotalSearches}`);
